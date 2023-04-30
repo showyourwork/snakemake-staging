@@ -1,3 +1,5 @@
+Very much still a work in progress. Something like the following is the target:
+
 ```python
 # File: Snakefile
 import snakemake_staging as staging
