@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "snakemake-staging"
+version = "0.0.0"
+description = ""
+authors = ["Dan Foreman-Mackey <foreman.mackey@gmail.com>"]
+readme = "README.md"
+packages = [{ include = "snakemake_staging", from = "src" }]
+
+[tool.poetry.dependencies]
+python = ">=3.9"
+snakemake = "*"  # TODO(dfm): Figure out a minimum version
+
+[tool.poetry-dynamic-versioning]
+enable = true
+vcs = "git"
+style = "semver"
+
+[tool.poetry-dynamic-versioning.substitution]
+folders = [{ path = "src" }]
+
+[build-system]
+requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning"]
+build-backend = "poetry_dynamic_versioning.backend"
