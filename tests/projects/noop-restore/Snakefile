@@ -1,0 +1,13 @@
+import snakemake_staging
+from snakemake_staging.stages import NoOpStage
+
+stage = NoOpStage("stage", config)
+
+rule a:
+    output:
+        stage.staged("output/a.txt")
+    run:
+        raise ValueError("this should not be executed")
+
+include:
+    snakemake_staging.snakefile()
