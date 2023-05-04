@@ -1,0 +1,60 @@
+{
+  "conceptdoi": "10.5072/zenodo.1198871",
+  "conceptrecid": "1198871",
+  "created": "2023-05-04T18:39:05.203303+00:00",
+  "doi": "10.5072/zenodo.1198872",
+  "doi_url": "https://doi.org/10.5072/zenodo.1198872",
+  "files": [
+    {
+      "checksum": "d8e8fca2dc0f896fd7cb4cb0031ba249",
+      "filename": "7dbc40099fc925b32c7b5ffa24841f44_a.txt",
+      "filesize": 5,
+      "id": "c611e2ae-0bc6-4bae-a914-010fc629e406",
+      "links": {
+        "download": "https://sandbox.zenodo.org/api/files/40698ed9-8e4f-4424-b1ad-ed33fbb81521/7dbc40099fc925b32c7b5ffa24841f44_a.txt",
+        "self": "https://sandbox.zenodo.org/api/deposit/depositions/1198872/files/c611e2ae-0bc6-4bae-a914-010fc629e406"
+      }
+    }
+  ],
+  "id": 1198872,
+  "links": {
+    "badge": "https://sandbox.zenodo.org/badge/doi/10.5072/zenodo.1198872.svg",
+    "bucket": "https://sandbox.zenodo.org/api/files/40698ed9-8e4f-4424-b1ad-ed33fbb81521",
+    "conceptbadge": "https://sandbox.zenodo.org/badge/doi/10.5072/zenodo.1198871.svg",
+    "conceptdoi": "https://doi.org/10.5072/zenodo.1198871",
+    "doi": "https://doi.org/10.5072/zenodo.1198872",
+    "latest": "https://sandbox.zenodo.org/api/records/1198872",
+    "latest_html": "https://sandbox.zenodo.org/record/1198872",
+    "record": "https://sandbox.zenodo.org/api/records/1198872",
+    "record_html": "https://sandbox.zenodo.org/record/1198872"
+  },
+  "metadata": {
+    "access_right": "open",
+    "communities": [
+      {
+        "identifier": "zenodo"
+      }
+    ],
+    "creators": [
+      {
+        "name": "snakemake-staging/v0.0.0"
+      }
+    ],
+    "description": "This is a a snapshot of the outputs of a Snakemake workflow",
+    "doi": "10.5072/zenodo.1198872",
+    "license": "CC0-1.0",
+    "prereserve_doi": {
+      "doi": "10.5072/zenodo.1198872",
+      "recid": 1198872
+    },
+    "publication_date": "2023-05-04",
+    "title": "Staged Snakemake Workflow: stage",
+    "upload_type": "dataset"
+  },
+  "modified": "2023-05-04T18:39:06.257817+00:00",
+  "owner": 4729,
+  "record_id": 1198872,
+  "state": "done",
+  "submitted": true,
+  "title": "Staged Snakemake Workflow: stage"
+}

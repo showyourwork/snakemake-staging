@@ -9,6 +9,11 @@ packages = [{ include = "snakemake_staging", from = "src" }]
 [tool.poetry.dependencies]
 python = ">=3.9"
 snakemake = "*"  # TODO(dfm): Figure out a minimum version
+requests = "*"
+
+[tool.poetry.group.test.dependencies]
+pytest = "^7.3.1"
+responses = "^0.23.1"
 
 [tool.poetry-dynamic-versioning]
 enable = true

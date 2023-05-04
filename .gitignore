@@ -1,1 +1,4 @@
 poetry.lock
+**/.snakemake
+.test
+.*_cache
