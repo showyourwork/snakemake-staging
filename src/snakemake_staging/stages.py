@@ -3,9 +3,9 @@ from collections import OrderedDict
 from pathlib import Path
 from typing import Any, Dict, List
 
-from snakemake_staging.utils import PathLike, path_to_identifier
+from snakemake_staging.utils import PathLike, path_to_identifier, working_directory
 
-STAGES: Dict[str, "Stage"] = {}
+STAGES: OrderedDict[str, "Stage"] = OrderedDict()
 
 
 def get_stages_to_restore(config: Dict[str, Any]) -> List[str]:
@@ -20,6 +20,10 @@ class Stage(ABC):
         self.name = name
         self.config = config
         self.files: OrderedDict[str, PathLike] = OrderedDict()
+        self.to_restore = self.name in get_stages_to_restore(self.config)
+        self.directory = working_directory(
+            "staging", "stages", self.name, config=self.config
+        )
         STAGES[name] = self
 
     def __call__(self, *files: PathLike) -> List[PathLike]:
@@ -45,17 +49,17 @@ class Stage(ABC):
             return list(files)
 
     @abstractmethod
-    def snapshot(self, local_path: PathLike) -> None:
+    def snapshot(self) -> None:
         ...
 
     @abstractmethod
-    def restore(self, local_path: PathLike) -> None:
+    def restore(self) -> None:
         ...
 
 
 class NoOpStage(Stage):
-    def snapshot(self, _: PathLike) -> None:
+    def snapshot(self) -> None:
         pass
 
-    def restore(self, _: PathLike) -> None:
+    def restore(self) -> None:
         pass
