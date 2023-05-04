@@ -22,6 +22,9 @@ class Stage(ABC):
         self.files: OrderedDict[str, PathLike] = OrderedDict()
         STAGES[name] = self
 
+    def __call__(self, *files: PathLike) -> List[PathLike]:
+        return self.staged(*files)
+
     def staged(self, *files: PathLike) -> List[PathLike]:
         # Extract the list of stages we want to restore from the config
         restore = get_stages_to_restore(self.config)

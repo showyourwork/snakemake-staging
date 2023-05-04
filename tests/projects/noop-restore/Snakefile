@@ -5,7 +5,7 @@ stage = NoOpStage("stage", config)
 
 rule a:
     output:
-        stage.staged("output/a.txt")
+        stage("output/a.txt")
     run:
         raise ValueError("this should not be executed")
 

@@ -4,16 +4,11 @@ Very much still a work in progress. Something like the following is the target:
 # File: Snakefile
 import snakemake_staging as staging
 
-# The staging configuration is handled by a global call to `staging.configure`,
-# which and you can pass any custom options here. In particular, this should
-# include a list of any stages that you want to snapshot or restore.
-staging.configure(config["staging"])
-
-
 stage = staging.GitStage(
     "stage",
     url="https://github.com/dfm/snakemake-staging.git",
     branch="stage",
+    config=config["staging"],
 )
 
 rule expensive_computation:
