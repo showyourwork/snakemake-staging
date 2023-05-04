@@ -1,19 +1,32 @@
+import hashlib
+import shutil
 from importlib.resources import as_file, files
 from pathlib import Path
-from typing import Any, Dict, Union
+from typing import Any, Dict, Optional, Union
 
 PathLike = Union[str, Path]
 
 
-def rule_name(*parts: str) -> str:
+def path_to_identifier(path: PathLike) -> str:
+    path_hash = hashlib.md5(str(path).encode()).hexdigest()
+    return f"{path_hash}_{Path(path).name}"
+
+
+def path_to_rule_name(path: PathLike) -> str:
+    return path_to_identifier(path).replace(".", "_")
+
+
+def rule_name(*parts: str, path: Optional[PathLike] = None) -> str:
+    if path is not None:
+        parts = list(parts) + [path_to_rule_name(path)]
     return f"staging__{'_'.join(parts)}"
 
 
 def working_directory(*parts: PathLike, config: Dict[str, Any]) -> Path:
     if "working_directory" in config:
-        path = Path(config["working_directory"]).resolve()
+        path = Path(config["working_directory"])
     else:
-        path = Path.cwd()
+        path = Path(".")
     return path / Path(*parts)
 
 
@@ -27,3 +40,11 @@ def package_data(*file: str, check: bool = True) -> Path:
             "'snakemake_staging'"
         )
     return path
+
+
+def copy_file_or_directory(src: PathLike, dst: PathLike) -> None:
+    Path(dst).parent.mkdir(parents=True, exist_ok=True)
+    if Path(src).is_dir():
+        shutil.copytree(src, dst)
+    else:
+        shutil.copyfile(src, dst)

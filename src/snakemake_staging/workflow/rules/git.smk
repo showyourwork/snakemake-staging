@@ -1,4 +1,3 @@
-# from snakemake_staging.git import 
 from snakemake_staging.utils import package_data, working_directory
 
 checkout = working_directory("staging", "git", "checkout", "{repo}", config=config)
@@ -13,3 +12,5 @@ rule staging__git__clone:
         branch="master"
     shell:
         "git clone {params.url} {output}"
+
+

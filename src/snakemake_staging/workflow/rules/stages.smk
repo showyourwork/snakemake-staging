@@ -1,28 +1,71 @@
-from snakemake_staging import stages
-from snakemake_staging.utils import rule_name
+from pathlib import Path
+from snakemake_staging import stages, utils
 
 _restore = stages.get_stages_to_restore(config)
-for stage, files in stages.STAGES.items():
+for name, stage in stages.STAGES.items():
+    staging_dir = utils.working_directory(
+        "staging", "stages", name, config=config
+    )
+
+    # Rules for restoring or snapshotting the staging directory based on the
+    # restore configuration 
     if name in _restore:
         rule:
             name:
-                rule_name("stages", "restore", stage)
+                utils.rule_name("restore", name)
             message:
-                f"Restoring {len(files)} files from snapshot for stage '{stage}'"
+                f"Restoring staging directory for '{name}'"
             output:
-                files
+                [staging_dir / f for f in stage.files.keys()]
             run:
-                stages.restore_stage(config, stage)
+                stage.restore(staging_dir)
+
+                # We check to make sure that all the files were restored
+                for file in output:
+                    if not file.exists():
+                        raise RuntimeError(
+                            f"File '{file}' was not sucessfully restored by "
+                            f"stage '{name}'"
+                        )
 
     else:
         rule:
             name:
-                rule_name("stages", "snapshot", stage)
+                utils.rule_name("snapshot", name)
             message:
-                f"Snapshotting {len(files)} files for stage '{stage}'"
+                f"Snapshotting stage '{name}'"
             input:
-                files
+                [staging_dir / f for f in stage.files.keys()]
             output:
-                touch(f"stage_{stage}.snapshot")
+                touch(staging_dir.parent / f"{name}.snapshot")
             run:
-                stages.snapshot_stage(config, stage)
+                stage.snapshot(staging_dir)
+
+    # Rules for copying files to and from the staging directory based on the
+    # restore configuration
+    for staged_filename, filename in stage.files.items():
+        if name in _restore:
+            rule:
+                name:
+                    utils.rule_name("restore", name, "copy", path=filename)
+                message:
+                    f"Copying file '{filename}' from stage '{name}'"
+                input:
+                    staging_dir / staged_filename
+                output:
+                    filename
+                run:
+                    utils.copy_file_or_directory(input[0], output[0])
+
+        else:
+            rule:
+                name:
+                    utils.rule_name("snapshot", name, "copy", path=filename)
+                message:
+                    f"Copying file '{filename}' to stage '{name}'"
+                input:
+                    filename
+                output:
+                    staging_dir / staged_filename
+                run:
+                    utils.copy_file_or_directory(input[0], output[0])

@@ -21,3 +21,18 @@ folders = [{ path = "src" }]
 [build-system]
 requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning"]
 build-backend = "poetry_dynamic_versioning.backend"
+
+[tool.black]
+target-version = ["py38", "py39"]
+line-length = 88
+
+[tool.ruff]
+line-length = 89
+update-check = false
+target-version = "py38"
+select = ["F", "I", "E", "W", "YTT", "B", "Q", "PLE", "PLW"]
+ignore = [
+    "E741", # Allow ambiguous variable names (e.g. "l" in starry)
+    "B023", # Allow using global variables in lambdas
+]
+exclude = []
