@@ -18,6 +18,7 @@ class ZenodoStage(Stage):
         self,
         name: str,
         info_file: PathLike,
+        url: Optional[str] = None,
         sandbox: bool = False,
         token: Optional[str] = None,
         config: Optional[Dict[str, Any]] = None,
@@ -31,10 +32,13 @@ class ZenodoStage(Stage):
         else:
             self.sandbox = sandbox
         self._token = token
-        if sandbox:
-            self.url = "https://sandbox.zenodo.org/api"
+        if url is None:
+            if sandbox:
+                self.url = "https://sandbox.zenodo.org/api"
+            else:
+                self.url = "https://zenodo.org/api"
         else:
-            self.url = "https://zenodo.org"
+            self.url = url
 
     def snakefile(self) -> PathLike:
         return package_data("workflow", "rules", "zenodo.smk")
@@ -157,12 +161,10 @@ This is a a snapshot of the outputs of a Snakemake workflow
 
         # Search the info file for the file we want to download
         ident = path_to_identifier(file)
-        download_url = None
-        for file_info in info.get("files", []):
-            if file_info["filename"] == ident:
-                download_url = file_info["links"]["download"]
-                break
-        if download_url is None:
+        download_url = f"{info['links']['record_html']}/files/{ident}"
+        if not any(
+            file_info["filename"] == ident for file_info in info.get("files", [])
+        ):
             raise RuntimeError(
                 f"File {file} not found in record metadata file {info_file}"
             )
@@ -175,8 +177,11 @@ This is a a snapshot of the outputs of a Snakemake workflow
                 require_token=False,
                 check=True,
                 session=session,
+                params={"download": 1},
                 stream=True,
             ) as response:
                 with open(file, "wb") as f:
                     for chunk in response.iter_content(chunk_size=8192):
                         f.write(chunk)
+
+        # TODO(dfm): Verify hash from info["files"][...]["checksum"]

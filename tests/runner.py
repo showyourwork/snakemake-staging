@@ -68,6 +68,7 @@ def run_context(
     check_contents: bool = True,
     conda_frontend: Optional[str] = "mamba",
     expected_dirname: PathLike = "expected",
+    **kwargs: Any,
 ) -> Generator[Path, None, None]:
     test_project_root = Path(path).resolve()
 
@@ -81,7 +82,9 @@ def run_context(
             test_project_root, tmpdir, ignore=ignore_expected, dirs_exist_ok=True
         )
         with cwd(tmpdir):
-            run_snakemake(*snakemake_args, conda_frontend=conda_frontend, cwd=tmpdir)
+            run_snakemake(
+                *snakemake_args, conda_frontend=conda_frontend, cwd=tmpdir, **kwargs
+            )
 
         expected_dir = test_project_root / expected_dirname
         if (check_exists or check_contents) and expected_dir.is_dir():
@@ -142,6 +145,7 @@ def run_snakemake(
     *args: str,
     conda_frontend: str = "mamba",
     cwd: Optional[PathLike] = None,
+    **kwargs: Any,
 ) -> subprocess.CompletedProcess[str]:
     result = subprocess.run(
         [
@@ -159,6 +163,7 @@ def run_snakemake(
         capture_output=True,
         text=True,
         cwd=cwd,
+        **kwargs,
     )
     if result.returncode:
         raise RuntimeError(
