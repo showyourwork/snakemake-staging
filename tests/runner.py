@@ -143,19 +143,6 @@ def run_snakemake(
     conda_frontend: str = "mamba",
     cwd: Optional[PathLike] = None,
 ) -> subprocess.CompletedProcess[str]:
-    print(
-        [
-            "snakemake",
-            "--cores",
-            "1",
-            "--use-conda",
-            "--conda-frontend",
-            conda_frontend,
-            "--conda-prefix",
-            conda_prefix,
-            *args,
-        ]
-    )
     result = subprocess.run(
         [
             "snakemake",
