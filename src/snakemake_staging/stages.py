@@ -3,6 +3,7 @@ from collections import OrderedDict
 from pathlib import Path
 from typing import List, Optional
 
+from snakemake_staging.config import _CONFIG
 from snakemake_staging.utils import PathLike, package_data, path_to_identifier
 
 STAGES: OrderedDict[str, "Stage"] = OrderedDict()
@@ -15,12 +16,16 @@ class Stage(ABC):
         self.name = name
         self.files: OrderedDict[str, PathLike] = OrderedDict()
         self.restore = restore
-        self.working_directory = (
-            Path("staging") if working_directory is None else Path(working_directory)
-        )
+        self._working_directory = working_directory
         if self.name in STAGES:
             raise ValueError(f"A stage called {self.name} already exists")
         STAGES[self.name] = self
+
+    @property
+    def working_directory(self) -> Path:
+        if self._working_directory is None:
+            return Path(_CONFIG.get("working_directory", "staging"))
+        return Path(self._working_directory)
 
     @property
     def upload_flag_file(self) -> Path:

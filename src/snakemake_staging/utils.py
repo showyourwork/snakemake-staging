@@ -2,7 +2,7 @@ import hashlib
 import shutil
 from importlib.resources import as_file, files
 from pathlib import Path
-from typing import Any, Dict, Optional, Union
+from typing import Optional, Union
 
 PathLike = Union[str, Path]
 
@@ -20,14 +20,6 @@ def rule_name(*parts: str, path: Optional[PathLike] = None) -> str:
     if path is not None:
         parts = list(parts) + [path_to_rule_name(path)]
     return f"staging__{'_'.join(parts)}"
-
-
-def working_directory(*parts: PathLike, config: Dict[str, Any]) -> Path:
-    if "working_directory" in config:
-        path = Path(config["working_directory"])
-    else:
-        path = Path(".")
-    return path / Path(*parts)
 
 
 def package_data(*file: str, check: bool = True) -> Path:

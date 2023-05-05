@@ -39,3 +39,7 @@ target-version = "py38"
 select = ["F", "I", "E", "W", "YTT", "B", "Q", "PLE", "PLW"]
 ignore = []
 exclude = []
+
+[tool.ruff.isort]
+force-wrap-aliases = true
+combine-as-imports = true
