@@ -32,7 +32,7 @@ for name, stage in stages.STAGES.items():
             input:
                 [stage.directory / f for f in stage.files.keys()]
             output:
-                touch(stage.directory.parent / f"{name}.snapshot")
+                touch(stage.upload_flag_file)
 
     # Rules for copying files to and from the staging directory based on the
     # restore configuration

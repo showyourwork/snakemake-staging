@@ -21,9 +21,6 @@ for name, stage in stages.STAGES.items():
                     stage.download_file(input[0], file)
 
     else:
-        working_directory = utils.working_directory(
-            "staging", "stages", config=stage.config
-        )
         rule:
             name:
                 utils.rule_name("zenodo", name)
@@ -33,6 +30,6 @@ for name, stage in stages.STAGES.items():
                 list(stage.files.values())
             output:
                 stage.info_file,
-                touch(working_directory / f"{name}.snapshot")
+                touch(stage.upload_flag_file)
             run:
                 stage.new_record(output[0], *input)

@@ -2,13 +2,13 @@ from tests.runner import run
 
 
 def test_noop_snapshot():
-    run("tests/projects/noop-snapshot", "staging/stages/stage.snapshot")
+    run("tests/projects/noop-snapshot", "staging/stage.upload")
 
 
 def test_noop_restore():
     run(
         "tests/projects/noop-restore",
         "output/a.txt",
-        "--configfile",
-        "config.yaml",
+        "--config",
+        "restore=True",
     )

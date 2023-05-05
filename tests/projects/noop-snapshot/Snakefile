@@ -1,7 +1,7 @@
 import snakemake_staging
 from snakemake_staging.stages import NoOpStage
 
-stage = NoOpStage("stage", config)
+stage = NoOpStage("stage", config.get("restore", False))
 
 rule a:
     output:

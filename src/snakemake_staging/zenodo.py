@@ -17,13 +17,14 @@ class ZenodoStage(Stage):
     def __init__(
         self,
         name: str,
+        restore: bool,
         info_file: PathLike,
         url: Optional[str] = None,
         sandbox: bool = False,
         token: Optional[str] = None,
-        config: Optional[Dict[str, Any]] = None,
+        working_directory: Optional[PathLike] = None,
     ):
-        super().__init__(name, config=config)
+        super().__init__(name, restore, working_directory=working_directory)
         self.info_file = Path(info_file)
         if self.info_file.exists():
             with open(self.info_file, "r") as f:

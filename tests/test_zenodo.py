@@ -17,7 +17,7 @@ def server():
 def test_zenodo_snapshot(server):
     run(
         "tests/projects/zenodo-snapshot",
-        "staging/stages/stage.snapshot",
+        "staging/stage.upload",
         "--config",
         f"zenodo_mock_url={server.url}/api",
         env=dict(os.environ, ZENODO_TOKEN="test"),
@@ -28,6 +28,6 @@ def test_zenodo_restore():
     run(
         "tests/projects/zenodo-restore",
         "output/a.txt",
-        "--configfile",
-        "config.yaml",
+        "--config",
+        "restore=True",
     )
