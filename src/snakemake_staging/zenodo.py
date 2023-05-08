@@ -1,3 +1,4 @@
+import hashlib
 import json
 import os
 from functools import cached_property
@@ -229,33 +230,41 @@ This is a a snapshot of the outputs of a Snakemake workflow
 
             return dep_id
 
-    def download_file(self, info_file: PathLike, file: PathLike) -> None:
+    def download_file(
+        self, info_file: PathLike, file: PathLike, verify: bool = True
+    ) -> None:
         with open(info_file, "r") as f:
             info = json.load(f)
 
         # Search the info file for the file we want to download
         ident = path_to_identifier(file)
         download_url = f"{info['links']['record_html']}/files/{ident}"
-        if not any(
-            file_info["filename"] == ident for file_info in info.get("files", [])
-        ):
+        file_info = list(
+            filter(lambda f: f["filename"] == ident, info.get("files", []))
+        )
+        if len(file_info) != 1:
             raise RuntimeError(
                 f"File {file} not found in record metadata file {info_file}"
             )
+        file_info = file_info[0]
 
         # Stream from the download URL directly into the target file
-        with self.session as session:
-            with self.request(
-                "GET",
-                url=download_url,
-                require_token=False,
-                check=True,
-                session=session,
-                params={"download": 1},
-                stream=True,
-            ) as response:
-                with open(file, "wb") as f:
-                    for chunk in response.iter_content(chunk_size=8192):
-                        f.write(chunk)
+        if verify:
+            checksum = hashlib.md5()
+        with self.request(
+            "GET",
+            url=download_url,
+            require_token=False,
+            check=True,
+            params={"download": 1},
+            stream=True,
+        ) as response:
+            with open(file, "wb") as f:
+                for chunk in response.iter_content(chunk_size=4096):
+                    if verify:
+                        checksum.update(chunk)
+                    f.write(chunk)
 
-        # TODO(dfm): Verify hash from info["files"][...]["checksum"]
+        if verify:
+            if checksum.hexdigest() != file_info["checksum"]:
+                raise RuntimeError(f"Checksum mismatch for downloaded file {file}")
