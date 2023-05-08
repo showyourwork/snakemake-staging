@@ -4,11 +4,9 @@ Very much still a work in progress. Something like the following is the target:
 # File: Snakefile
 import snakemake_staging as staging
 
-stage = staging.GitStage(
+stage = staging.ZenodoStage(
     "stage",
-    url="https://github.com/dfm/snakemake-staging.git",
-    branch="stage",
-    config=config["staging"],
+    config.get("restore", False)
 )
 
 rule expensive_computation:

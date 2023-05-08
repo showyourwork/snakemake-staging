@@ -18,14 +18,14 @@ class ZenodoStage(Stage):
         self,
         name: str,
         restore: bool,
-        info_file: PathLike,
+        info_file: Optional[PathLike] = None,
         url: Optional[str] = None,
         sandbox: bool = False,
         token: Optional[str] = None,
         working_directory: Optional[PathLike] = None,
     ):
         super().__init__(name, restore, working_directory=working_directory)
-        self.info_file = Path(info_file)
+        self._info_file = info_file
         if self.info_file.exists():
             with open(self.info_file, "r") as f:
                 info = json.load(f)
@@ -40,6 +40,20 @@ class ZenodoStage(Stage):
                 self.url = "https://zenodo.org/api"
         else:
             self.url = url
+
+    @property
+    def info_file(self) -> Path:
+        if self._info_file is None:
+            return self.working_directory / f"{self.name}.zenodo.json"
+        return Path(self._info_file)
+
+    @property
+    def draft_info_file(self) -> Path:
+        return self.working_directory / f"{self.name}.draft.zenodo.json"
+
+    def upload_info_file(self, file: PathLike) -> Path:
+        ident = path_to_identifier(file)
+        return self.working_directory / f"{self.name}.zenodo" / f"{ident}.upload.json"
 
     def snakefile(self) -> PathLike:
         return package_data("workflow", "rules", "zenodo.smk")
@@ -100,6 +114,65 @@ class ZenodoStage(Stage):
                 print(response.text)
                 raise
         return response
+
+    def create_draft(self, info_file: PathLike, **metadata: Any) -> None:
+        metadata_proc: Dict[str, Any] = {
+            "title": f"Staged Snakemake Workflow: {self.name}",
+            "description": """
+This is a a snapshot of the outputs of a Snakemake workflow
+""",
+            "creators": [{"name": f"snakemake-staging/v{__version__}"}],
+            "upload_type": "dataset",
+        }
+        metadata_proc = dict(metadata_proc, **metadata)
+        metadata_proc = {"metadata": metadata_proc}
+
+        response = self.request(
+            "POST",
+            "/deposit/depositions",
+            require_token=True,
+            check=True,
+            json=metadata_proc,
+        )
+
+        with open(info_file, "w") as f:
+            json.dump(response.json(), f, indent=2)
+
+    def upload_file(
+        self, draft_info_file: PathLike, file: PathLike, upload_info_file: PathLike
+    ) -> None:
+        with open(draft_info_file, "r") as f:
+            draft_info = json.load(f)
+
+        bucket_url = draft_info["links"]["bucket"]
+        ident = path_to_identifier(file)
+        with open(file, "rb") as f:
+            response = self.request(
+                "PUT",
+                url=f"{bucket_url}/{ident}",
+                require_token=True,
+                check=True,
+                data=f,
+            )
+
+        with open(upload_info_file, "w") as f:
+            json.dump(response.json(), f, indent=2)
+
+    def publish_draft(self, draft_info_file: PathLike, info_file: PathLike) -> None:
+        with open(draft_info_file, "r") as f:
+            draft_info = json.load(f)
+        dep_id = draft_info["id"]
+
+        response = self.request(
+            "POST",
+            f"/deposit/depositions/{dep_id}/actions/publish",
+            require_token=True,
+            check=True,
+        )
+
+        # Save the draft data to the output file
+        with open(info_file, "w") as f:
+            json.dump(response.json(), f, indent=2)
 
     def new_record(self, info_file: PathLike, *files: PathLike, **metadata: Any) -> str:
         # Set default metadata for required fields
