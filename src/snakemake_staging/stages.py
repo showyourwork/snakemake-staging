@@ -3,6 +3,8 @@ from collections import OrderedDict
 from pathlib import Path
 from typing import List, Optional
 
+from snakemake.io import OutputFiles
+
 from snakemake_staging.config import _CONFIG
 from snakemake_staging.utils import PathLike, package_data, path_to_identifier
 
@@ -34,9 +36,9 @@ class Stage(ABC):
     def __call__(self, *files: PathLike) -> List[PathLike]:
         return self.staged(*files)
 
-    def staged(self, *files: PathLike, **named: PathLike) -> List[PathLike]:
+    def staged(self, *files: PathLike) -> List[PathLike]:
         # Add this list of files to the database of files for this stage
-        for file in files + tuple(named.values()):
+        for file in files:
             identifier = path_to_identifier(file)
             if identifier in self.files:
                 raise RuntimeError(
