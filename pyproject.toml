@@ -12,9 +12,9 @@ snakemake = "*"  # TODO(dfm): Figure out a minimum version
 requests = "*"
 
 [tool.poetry.group.test.dependencies]
-pytest = "^7.3.1"
-responses = "^0.23.1"
-flask = "^2.3.2"
+pytest = "*"
+flask = "*"
+snakemake-testing = ">=0.0.2"
 
 [tool.poetry-dynamic-versioning]
 enable = true

@@ -1,8 +1,8 @@
 import os
 
 import pytest
+from snakemake_testing import run_snakemake
 
-from tests.runner import run
 from tests.zenodo_mock import ZenodoMock
 
 
@@ -15,7 +15,7 @@ def server():
 
 
 def test_zenodo_snapshot(server):
-    run(
+    run_snakemake(
         "tests/projects/zenodo-snapshot",
         "staging__upload",
         "--config",
@@ -25,7 +25,7 @@ def test_zenodo_snapshot(server):
 
 
 def test_zenodo_restore():
-    run(
+    run_snakemake(
         "tests/projects/zenodo-restore",
         "output/a.txt",
         "--config",

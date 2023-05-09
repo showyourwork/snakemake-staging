@@ -1,8 +1,8 @@
-from tests.runner import run
+from snakemake_testing import run_snakemake
 
 
 def test_config_args():
-    run(
+    run_snakemake(
         "tests/projects/config",
         "staging2/stage.upload",
         "-s",
@@ -13,7 +13,7 @@ def test_config_args():
 
 
 def test_config_kwargs():
-    run(
+    run_snakemake(
         "tests/projects/config",
         "staging2/stage.upload",
         "-s",
