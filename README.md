@@ -84,7 +84,7 @@ include: staging.snakefile()
 At this point, here's the full `Snakefile`:
 
 <details>
-<summary>Full Snakefile example</summary>
+<summary>Full Snakefile</summary>
 
 ```python
 import snakemake_staging as staging
@@ -120,11 +120,11 @@ workflow in 3 ways:
    and `--conda` arguments) will execute the workflow as normal, without
    staging out any files.
 
-2. **Stage upload**: If you instead have Snakemake target the
-   `zenodo-stage.zenodo.json` file (this filename can be changed by passing the
-   `info_file` argument to the `ZenodoStage` constructor), the `expensive` rule
-   will be executed, and the outputs will be uploaded to Zenodo, saving the
-   record information to `zenodo-stage.zenodo.json`.
+2. **Stage upload**: If you instead have Snakemake target the `staging__upload`
+   rule, the `expensive` rule will be executed, and the outputs will be uploaded
+   to Zenodo, saving the record information to `zenodo-stage.zenodo.json` (this
+   filename can be changed by passing the `info_file` argument to the
+   `ZenodoStage` constructor).
 
 3. **Stage restore**: Finally, after these outputs have been uploaded to Zenodo,
    you can call Snakemake `--config restore=True` to disable the `expensive`

@@ -17,7 +17,7 @@ def server():
 def test_zenodo_snapshot(server):
     run(
         "tests/projects/zenodo-snapshot",
-        "staging/stage.upload",
+        "staging__upload",
         "--config",
         f"zenodo_mock_url={server.url}/api",
         env=dict(os.environ, ZENODO_TOKEN="test"),

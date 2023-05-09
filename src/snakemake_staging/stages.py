@@ -3,8 +3,6 @@ from collections import OrderedDict
 from pathlib import Path
 from typing import List, Optional
 
-from snakemake.io import OutputFiles
-
 from snakemake_staging.config import _CONFIG
 from snakemake_staging.utils import PathLike, package_data, path_to_identifier
 
