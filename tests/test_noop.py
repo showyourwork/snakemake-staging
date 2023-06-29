@@ -1,4 +1,4 @@
-from snakemake_testing import run_snakemake
+from snakemake_staging.testing import run_snakemake
 
 
 def test_noop_snapshot():

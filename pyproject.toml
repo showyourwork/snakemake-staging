@@ -14,7 +14,6 @@ requests = "*"
 [tool.poetry.group.test.dependencies]
 pytest = "*"
 flask = "*"
-snakemake-testing = ">=0.0.2"
 
 [tool.poetry-dynamic-versioning]
 enable = true
@@ -34,7 +33,6 @@ line-length = 88
 
 [tool.ruff]
 line-length = 89
-update-check = false
 target-version = "py38"
 select = ["F", "I", "E", "W", "YTT", "B", "Q", "PLE", "PLW"]
 ignore = []

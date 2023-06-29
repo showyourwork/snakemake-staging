@@ -1,7 +1,7 @@
 import os
 
 import pytest
-from snakemake_testing import run_snakemake
+from snakemake_staging.testing import run_snakemake
 
 from tests.zenodo_mock import ZenodoMock
 
